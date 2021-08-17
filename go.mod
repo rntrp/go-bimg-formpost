@@ -1,4 +1,4 @@
-module example.com/rest
+module example.com/bimg-rest
 
 go 1.16
 
