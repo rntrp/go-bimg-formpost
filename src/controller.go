@@ -94,6 +94,9 @@ func getOptions(width, height int, format bimg.ImageType) bimg.Options {
 func printMemUsage() {
 	var m runtime.MemStats
 	runtime.ReadMemStats(&m)
+	bToMiB := func (b uint64) string {
+		return strconv.FormatFloat(float64(b) / 1_048_576, 'f', 3, 64)
+	}
 	fmt.Printf("Alloc = %v MiB" +
 		"\tTotalAlloc = %v MiB" +
 		"\tSys = %v MiB" +
@@ -102,9 +105,4 @@ func printMemUsage() {
 		bToMiB(m.TotalAlloc),
 		bToMiB(m.Sys),
 		m.NumGC)
-}
-
-func bToMiB(b uint64) string {
-	f := float64(b) / 1_048_576
-	return strconv.FormatFloat(f, 'f', 3, 64)
 }
