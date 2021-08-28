@@ -39,7 +39,7 @@ func Scale(w http.ResponseWriter, r *http.Request) {
 	defer f.Close()
 	if fh.Size > maxFileSize {
 		w.WriteHeader(http.StatusRequestEntityTooLarge)
-		w.Write([]byte("Max file size is 256 MiB."))
+		fmt.Fprintf(w, "Max file size is %d", maxFileSize)
 		return
 	}
 	buf, err := ioutil.ReadAll(f)
