@@ -12,20 +12,20 @@ import (
 	"github.com/h2non/bimg"
 )
 
-const maxMemory int64 = 1024 * 1024 * 64
-const maxFileSize int64 = 1024 * 1024 * 256
+const maxMemory int64 = 1024 * 64
+const maxFileSize int64 = 1024 * 1024 * 512
 
 func Welcome(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("welcome"))
 }
 
 func Scale(w http.ResponseWriter, r *http.Request) {
+	printMemUsage()
 	query := r.URL.Query()
 	width, _ := strconv.Atoi(query.Get("width"))
 	height, _ := strconv.Atoi(query.Get("height"))
 	format := getFormat(query.Get("format"))
-	err := r.ParseMultipartForm(maxMemory)
-	if err != nil {
+	if err := r.ParseMultipartForm(maxMemory); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte(err.Error()))
 		return
@@ -41,8 +41,7 @@ func Scale(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusRequestEntityTooLarge)
 		w.Write([]byte("Max file size is 256 MiB."))
 		return
-	} 
-	printMemUsage(1)
+	}
 	buf, err := ioutil.ReadAll(f)
 	if err != nil {
 		log.Println(err)
@@ -54,7 +53,6 @@ func Scale(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("File 'image' is empty."))
 		return
 	}
-	printMemUsage(2)
 	options := getOptions(width, height, format)
 	o, err := bimg.NewImage(buf).Process(options)
 	if err != nil {
@@ -62,8 +60,8 @@ func Scale(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	printMemUsage(3)
 	w.Write(o)
+	printMemUsage()
 }
 
 func getFormat(format string) bimg.ImageType {
@@ -93,14 +91,17 @@ func getOptions(width, height int, format bimg.ImageType) bimg.Options {
 	}
 }
 
-func printMemUsage(step int) {
+func printMemUsage() {
 	var m runtime.MemStats
 	runtime.ReadMemStats(&m)
-	fmt.Printf("Step %d: Alloc = %v MiB", step, bToMiB(m.Alloc))
-	fmt.Printf("\tTotalAlloc = %v MiB", bToMiB(m.TotalAlloc))
-	fmt.Printf("\tSys = %v MiB", bToMiB(m.Sys))
-	fmt.Printf("\tNumGC = %v", m.NumGC)
-	fmt.Println()
+	fmt.Printf("Alloc = %v MiB" +
+		"\tTotalAlloc = %v MiB" +
+		"\tSys = %v MiB" +
+		"\tNumGC = %v\n",
+		bToMiB(m.Alloc),
+		bToMiB(m.TotalAlloc),
+		bToMiB(m.Sys),
+		m.NumGC)
 }
 
 func bToMiB(b uint64) string {
