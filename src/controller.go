@@ -65,25 +65,31 @@ func Scale(w http.ResponseWriter, r *http.Request) {
 }
 
 func getFormat(format string) bimg.ImageType {
-	switch (strings.ToLower(format)) {
-	case "png": return bimg.PNG
-	case "webp": return bimg.WEBP
-	case "gif": return bimg.GIF
-	case "heif", "heic": return bimg.HEIF
-	case "avif": return bimg.AVIF
-	default: return bimg.JPEG
+	switch strings.ToLower(format) {
+	case "png":
+		return bimg.PNG
+	case "webp":
+		return bimg.WEBP
+	case "gif":
+		return bimg.GIF
+	case "heif", "heic":
+		return bimg.HEIF
+	case "avif":
+		return bimg.AVIF
+	default:
+		return bimg.JPEG
 	}
 }
 
 func getOptions(width, height int, format bimg.ImageType) bimg.Options {
-	return bimg.Options {
+	return bimg.Options{
 		Width:         width,
 		Height:        height,
 		Type:          format,
 		Compression:   9,
 		Quality:       99,
 		Extend:        bimg.ExtendWhite,
-		Background:    bimg.Color{R:0xFF, G:0xFF, B:0xFF},
+		Background:    bimg.Color{R: 0xFF, G: 0xFF, B: 0xFF},
 		Embed:         true,
 		Enlarge:       true,
 		StripMetadata: true,
@@ -94,12 +100,12 @@ func getOptions(width, height int, format bimg.ImageType) bimg.Options {
 func printMemUsage() {
 	var m runtime.MemStats
 	runtime.ReadMemStats(&m)
-	bToMiB := func (b uint64) string {
-		return strconv.FormatFloat(float64(b) / 1_048_576, 'f', 3, 64)
+	bToMiB := func(b uint64) string {
+		return strconv.FormatFloat(float64(b)/1_048_576, 'f', 3, 64)
 	}
-	fmt.Printf("Alloc = %v MiB" +
-		"\tTotalAlloc = %v MiB" +
-		"\tSys = %v MiB" +
+	fmt.Printf("Alloc = %v MiB"+
+		"\tTotalAlloc = %v MiB"+
+		"\tSys = %v MiB"+
 		"\tNumGC = %v\n",
 		bToMiB(m.Alloc),
 		bToMiB(m.TotalAlloc),
