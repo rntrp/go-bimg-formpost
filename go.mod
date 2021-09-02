@@ -1,4 +1,4 @@
-module example.com/bimg-rest
+module github.com/rntrp/bimg-rest
 
 go 1.16
 
