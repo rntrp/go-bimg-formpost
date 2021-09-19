@@ -11,7 +11,6 @@ $ apt install libvips
 ```
 Run the application at port 8080:
 ```bash
-$ cd src
 $ go run .
 ```
 
