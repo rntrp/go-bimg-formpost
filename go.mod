@@ -1,4 +1,4 @@
-module github.com/rntrp/bimg-rest
+module github.com/rntrp/go-bimg-formpost
 
 go 1.16
 

@@ -8,8 +8,8 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/rntrp/bimg-rest/internal/config"
-	"github.com/rntrp/bimg-rest/internal/rest"
+	"github.com/rntrp/go-bimg-formpost/internal/config"
+	"github.com/rntrp/go-bimg-formpost/internal/rest"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"

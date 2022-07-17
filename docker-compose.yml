@@ -1,8 +1,8 @@
 version: "3.7"
 services:
   web:
-    container_name: bimg-rest-example
-    image: bimg-rest-example:latest
+    container_name: go-bimg-formpost
+    image: go-bimg-formpost:latest
     restart: "no"
     build: .
     ports:

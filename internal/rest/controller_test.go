@@ -9,7 +9,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/rntrp/bimg-rest/internal/config"
+	"github.com/rntrp/go-bimg-formpost/internal/config"
 )
 
 func init() {

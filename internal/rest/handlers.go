@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/rntrp/bimg-rest/internal/config"
+	"github.com/rntrp/go-bimg-formpost/internal/config"
 )
 
 func handleUnsupportedFormatError(w http.ResponseWriter, err error) bool {

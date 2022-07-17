@@ -1,4 +1,4 @@
-# Go bimg Formpost
+# Image Conversion Formpost Microservice
 Multipart formpost microservice based on [`bimg`](https://github.com/h2non/bimg), a very fast image processing library which uses native library [`libvips`](https://libvips.github.io/libvips/) via C bindings.
 
 ## Build & Launch
