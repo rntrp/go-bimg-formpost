@@ -9,7 +9,7 @@ RUN apk add --no-cache build-base vips-dev upx \
     && upx --best --lzma /go-bimg-formpost
 
 FROM alpine:3.16
-RUN apk add --no-cache vips ttf-liberation
+RUN apk add --no-cache vips-poppler ttf-liberation
 COPY --from=builder /go-bimg-formpost ./
 EXPOSE 8080
 ENTRYPOINT ["/go-bimg-formpost"]
