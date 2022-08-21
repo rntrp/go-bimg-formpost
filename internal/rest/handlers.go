@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/h2non/bimg"
 	"github.com/rntrp/go-bimg-formpost/internal/config"
 )
 
@@ -73,4 +74,19 @@ func setupFileSizeChecks(w http.ResponseWriter, r *http.Request) bool {
 		r.Body = http.MaxBytesReader(w, r.Body, maxReqSize)
 	}
 	return true
+}
+
+func handleImageSize(w http.ResponseWriter, img *bimg.Image) (bimg.ImageSize, bool) {
+	size, err := img.Size()
+	if err != nil {
+		if err.Error() == "Unsupported image format" {
+			http.Error(w, http.StatusText(http.StatusUnsupportedMediaType),
+				http.StatusUnsupportedMediaType)
+		} else {
+			http.Error(w, http.StatusText(http.StatusBadRequest),
+				http.StatusBadRequest)
+		}
+		return bimg.ImageSize{}, false
+	}
+	return size, true
 }

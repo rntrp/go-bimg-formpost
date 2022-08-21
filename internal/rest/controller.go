@@ -12,31 +12,43 @@ func Convert(w http.ResponseWriter, r *http.Request) {
 	width, errW := coerceWidth(query.Get("width"))
 	height, errH := coerceHeight(query.Get("height"))
 	format, errF := coerceFormat(query.Get("format"))
-	for _, err := range [...]error{errW, errH, errF} {
+	compression, quality, errCQ := coerceQuality(query.Get("quality"), format)
+	resample, errRS := coerceResample(query.Get("resample"))
+	background, errBKG := coerceBackground(query.Get("background"))
+	for _, err := range [...]error{errW, errH, errF, errCQ, errRS, errBKG} {
 		if err != nil {
 			http.Error(w, http.StatusText(http.StatusBadRequest),
 				http.StatusBadRequest)
 			return
 		}
 	}
-	src := handleFileUpload(w, r)
-	if src == nil {
-		return
-	}
 	options := bimg.Options{
 		Width:         width,
 		Height:        height,
 		Type:          format,
-		Compression:   9,
-		Quality:       99,
-		Extend:        bimg.ExtendWhite,
-		Background:    bimg.Color{R: 0xFF, G: 0xFF, B: 0xFF},
-		Embed:         true,
-		Enlarge:       true,
+		Compression:   compression,
+		Quality:       quality,
+		Interpolator:  resample,
+		Background:    background,
 		StripMetadata: true,
 		NoProfile:     true,
 	}
-	out, err := bimg.NewImage(src).Process(options)
+	if err := coerceResize(query.Get("resize"), &options); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest),
+			http.StatusBadRequest)
+		return
+	}
+	src := handleFileUpload(w, r)
+	if src == nil {
+		return
+	}
+	img := bimg.NewImage(src)
+	size, sizeOk := handleImageSize(w, img)
+	if !sizeOk {
+		return
+	}
+	preserveAspectRatio(query.Get("resize"), size, &options)
+	out, err := img.Process(options)
 	if !handleUnsupportedFormatError(w, err) {
 		return
 	}

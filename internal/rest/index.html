@@ -44,6 +44,7 @@
 					"width",
 					"height",
 					"format",
+					"resize",
 				];
 				const query = inputs
 					.map(function (id) {
@@ -67,7 +68,7 @@
 			<form id="form1" action="#" method="POST" enctype="multipart/form-data">
 				<p>
 					<label for="convert">Document*:</label>
-					<input id="convert" type="file" name="img" accept="image/*">
+					<input id="convert" type="file" name="img" accept="image/*,application/pdf">
 				</p>
 				<p>
 					<label for="width">Width*:</label>
@@ -87,6 +88,22 @@
 						<option value="webp">WebP</option>
 						<option value="heif">HEIF</option>
 						<option value="avif">AVIF</option>
+					</select>
+				</p>
+				<p>
+					<label for="resize">Resize:</label>
+					<select id="resize" onchange="update()">
+						<option value="fit">Fit</option>
+						<option value="fit-upscale">Fit upscale</option>
+						<option value="fit-upscale-black">Fit upscale black</option>
+						<option value="fit-upscale-white">Fit upscale white</option>
+						<option value="fill">Fill</option>
+						<option value="fill-north">Fill north</option>
+						<option value="fill-east">Fill east</option>
+						<option value="fill-south">Fill south</option>
+						<option value="fill-west">Fill west</option>
+						<option value="fill-smart">Fill smart</option>
+						<option value="stretch">Stretch</option>
 					</select>
 				</p>
 				<p>
