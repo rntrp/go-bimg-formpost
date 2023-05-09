@@ -1,5 +1,7 @@
+[![Release](https://img.shields.io/github/v/release/rntrp/go-bimg-formpost)](https://github.com/rntrp/go-bimg-formpost/releases)
 [![Go Version](https://img.shields.io/github/go-mod/go-version/rntrp/go-bimg-formpost)](https://go.dev/dl/)
 [![Go Report Card](https://goreportcard.com/badge/github.com/rntrp/go-bimg-formpost)](https://goreportcard.com/report/github.com/rntrp/go-bimg-formpost)
+[![Docker Image](https://img.shields.io/docker/image-size/rntrp/go-bimg-formpost/latest?logo=docker)](https://hub.docker.com/r/rntrp/go-bimg-formpost)
 
 # Image Conversion Formpost Microservice
 Multipart formpost microservice based on [`bimg`](https://github.com/h2non/bimg), a very fast image processing library which uses native library [`libvips`](https://libvips.github.io/libvips/) via C bindings.
