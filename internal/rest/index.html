@@ -45,11 +45,15 @@
 					"height",
 					"format",
 					"resize",
+					"background",
 				];
 				const query = inputs
 					.map(function (id) {
 						var v = document.getElementById(id).value;
-						return v && v !== "" ? id + "=" + v : null;
+						if (v && v !== "") {
+							return id + "=" + encodeURIComponent(v);
+						}
+						return null;
 					})
 					.filter(Boolean)
 					.join("&");
@@ -105,6 +109,10 @@
 						<option value="fill-smart">Fill smart</option>
 						<option value="stretch">Stretch</option>
 					</select>
+				</p>
+				<p>
+					<label for="background">Background:</label>
+					<input id="background" type="color" value="#000000" onchange="update()">
 				</p>
 				<p>
 					<label for="upload-convert">Upload:</label>

@@ -109,7 +109,7 @@ func coerceBackground(background string) (bimg.Color, error) {
 	if len(background) == 0 {
 		return bimg.ColorBlack, nil
 	}
-	color, err := hex.DecodeString(background)
+	color, err := hex.DecodeString(strings.TrimPrefix(background, "#"))
 	if err != nil {
 		return bimg.ColorBlack, err
 	} else if len(color) != 3 {
