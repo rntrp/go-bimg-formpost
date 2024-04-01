@@ -7,7 +7,7 @@
 Multipart formpost microservice based on [`bimg`](https://github.com/h2non/bimg), a very fast image processing library which uses native library [`libvips`](https://libvips.github.io/libvips/) via C bindings.
 
 ## Build & Launch
-Besides Go 1.20, `libvips` needs to be installed separately. `bimg` apparently works with `libvips` 8.3, but recommends 8.8+.
+Besides Go 1.22, `libvips` needs to be installed separately. `bimg` apparently works with `libvips` 8.3, but recommends 8.8+.
 
 ### Locally
 Follow [installation instructions](https://github.com/h2non/bimg#libvips) for `libvips`, e.g.
