@@ -2,30 +2,31 @@ package main
 
 import (
 	"context"
-	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
+	"github.com/go-chi/httplog/v2"
 	"github.com/rntrp/go-bimg-formpost/internal/config"
 	"github.com/rntrp/go-bimg-formpost/internal/rest"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func init() {
-	log.Println("Loading GO-BIMG-FORMPOST...")
+	slog.Info("Loading GO-BIMG-FORMPOST...")
 	config.Load()
 }
 
 func main() {
 	if err := start(); err != nil {
-		log.Fatalln(err)
+		slog.Error(err.Error())
+	} else {
+		slog.Info("Bye.")
 	}
-	log.Println("Bye.")
 }
 
 func start() error {
@@ -33,7 +34,7 @@ func start() error {
 	signal := make(chan os.Signal, 1)
 	srv := server(signal)
 	go shutdownMonitor(signal, srvout, srv)
-	log.Println("Starting server at " + srv.Addr)
+	slog.Info("Starting server", "addr", srv.Addr)
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		return err
 	}
@@ -41,19 +42,24 @@ func start() error {
 }
 
 func server(sig chan os.Signal) *http.Server {
-	r := chi.NewRouter()
-	r.Use(middleware.Logger)
-	r.Get("/", rest.Index)
-	r.Get("/index.html", rest.Index)
-	r.Get("/live", rest.Live)
-	r.Post("/convert", rest.Convert)
+	r := http.NewServeMux()
+	r.HandleFunc("GET /", rest.Index)
+	r.HandleFunc("GET /index.html", rest.Index)
+	r.HandleFunc("GET /live", rest.Live)
+	r.HandleFunc("POST /convert", rest.Convert)
 	if config.IsEnablePrometheus() {
 		r.Handle("/metrics", promhttp.Handler())
 	}
 	if config.IsEnableShutdown() {
-		r.Post("/shutdown", shutdownFn(sig))
+		r.HandleFunc("POST /shutdown", shutdownFn(sig))
 	}
-	return &http.Server{Addr: config.GetTCPAddress(), Handler: r}
+	h := httplog.Handler(httplog.NewLogger("GO-BIMG-FORMPOST", httplog.Options{
+		Concise:         true,
+		JSON:            false,
+		RequestHeaders:  false,
+		TimeFieldFormat: time.RFC3339,
+	}))(r)
+	return &http.Server{Addr: config.GetTCPAddress(), Handler: h}
 }
 
 func shutdownFn(sig chan os.Signal) func(http.ResponseWriter, *http.Request) {
@@ -67,7 +73,7 @@ func shutdownMonitor(sig chan os.Signal, out chan error, srv *http.Server) {
 	timeout := config.GetShutdownTimeout()
 	signal.Notify(sig, os.Interrupt, syscall.SIGTERM, syscall.SIGQUIT)
 	sigName := (<-sig).String()
-	log.Println("Signal received: " + sigName)
+	slog.Info("Shutdown signal received", "signal", sigName)
 	ctx := context.Background()
 	if timeout > 0 {
 		var cancel context.CancelFunc
